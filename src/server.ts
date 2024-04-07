@@ -1,7 +1,19 @@
 import app from "./app";
+import { logger } from "./configs/logger";
+// import sequelize from "./db";
 
 const PORT = process.env.PORT || 80;
 
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
-});
+(async () => {
+  try {
+    // await sequelize.sync({ force: true }); // Set force: true to drop and recreate tables (use with caution!)
+
+    logger.info("Database tables resynced");
+
+    app.listen(PORT, () => {
+      logger.info(`Listening on port ${PORT}`);
+    });
+  } catch (error) {
+    logger.error("Error initializing server:", error);
+  }
+})();

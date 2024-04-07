@@ -28,9 +28,9 @@ app.get("/", (_req, res) => {
   res.send("<h1>Welcome To JWT Authentication </h1>");
 });
 app.use("/api/v1", routes);
+app.use(errorHandler);
 app.get("*", (_req, res) => {
   res.status(404).send("Not Found");
 });
-app.use(errorHandler);
 
 export default app;
