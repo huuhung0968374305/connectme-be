@@ -7,6 +7,8 @@ export class User extends Model<UserAttributes> {
 
   declare password: string;
 
+  declare email: string;
+
   declare username: string;
 }
 User.init(
@@ -19,7 +21,6 @@ User.init(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     firstName: {
       type: DataTypes.STRING,

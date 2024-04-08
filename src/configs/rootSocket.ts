@@ -1,17 +1,19 @@
-import socketIo from 'socket.io';
+import socketIo from "socket.io";
 
-export const rootSocket = (io: socketIo.Server) => {
-    io.on('connection', (socket) => {
-        console.log('New connection');
-        socket.on('join-new-room', (room) => {
-            console.log('join new room', room);
-            socket.join(room);
-        });
-
-        socket.on('disconnect', () => {
-            console.log('disconnected');
-            console.log(socket.rooms.size);
-        });
+export const sockerHanler = (io: socketIo.Server) => {
+  io.on("connection", async (socket) => {
+    console.log("socket.id", socket.id);
+    socket.on("join-room", async ({ room, userId }) => {
+      console.log("join new room", room);
+      await socket.join(room);
     });
-    return io;
+
+    socket.on("send-message", ({ message, room }) => {
+      socket.to(room).emit("new-message", { message }); // Include sender information
+    });
+
+    socket.on("disconnect", () => {
+      console.log(socket.rooms.size);
+    });
+  });
 };

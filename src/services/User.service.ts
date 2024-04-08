@@ -6,9 +6,9 @@ import { User } from "../models/User.model";
 
 export class UserService {
   async register(user: UserAttributes): Promise<any> {
-    const { username } = user;
+    const { email } = user;
     const userExisted = await User.findOne({
-      where: { username },
+      where: { email },
     });
     if (userExisted) {
       return { userExisted: true };
@@ -22,23 +22,24 @@ export class UserService {
     return newUser;
   }
 
-  async login({ username, password }: UserAttributes) {
+  async login({ email, password }: UserAttributes) {
     const user = await User.findOne({
-      where: { username },
+      where: { email },
     });
     if (!user) {
-      return null;
+      return { error: "User not found" };
     }
     const userAllowed = await bcrypt.compare(password, user.password);
 
     if (userAllowed) {
       const payload = {
-        username: user.username,
+        email: user.email,
       };
       const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
-      return accessToken;
+      return { accessToken, id: user.id };
     }
+    return { error: "Incorrect password" };
   }
 }

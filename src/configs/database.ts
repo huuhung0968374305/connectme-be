@@ -1,4 +1,6 @@
-export const dbConfig: any = {
+import "dotenv/config";
+
+export const dbConfig = {
   username: process.env.DB_USER || "",
   password: process.env.DB_PASS || "",
   database: process.env.DB_NAME || "",
@@ -11,4 +13,4 @@ export const dbConfig: any = {
     acquire: 30000,
     idle: 10000,
   },
-};
+} as const;

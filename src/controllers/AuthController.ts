@@ -2,14 +2,14 @@ import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
 import { logger } from "../configs/logger";
 import { UserService } from "../services/User.service";
-import userValidation from "../middlewares/userValidation";
+import { signUpValidation } from "../middlewares/userValidation";
 import { ValidationHelper } from "../helpers/validation.helper";
 
 export default class AuthController {
   constructor(private readonly userService: UserService) {}
 
   register = async (req: Request, res: Response, next: NextFunction) => {
-    const { username, password } = req.body;
+    const { email, username, password } = req.body;
     const validate: any = validationResult(req);
     if (validate.errors?.length > 0) {
       return res.status(400).send({ errors: validate.errors });
@@ -17,8 +17,9 @@ export default class AuthController {
 
     try {
       const result = await this.userService.register({
-        username,
+        email,
         password,
+        username,
       });
       if (result.userExisted) {
         res.status(400).send({ error: "User existed" });
@@ -31,20 +32,20 @@ export default class AuthController {
   };
 
   login = async (req: Request, res: Response, next: NextFunction) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     const validate: any = validationResult(req);
     if (validate.errors?.length > 0) {
       return res.status(400).send({ errors: validate.errors });
     }
     try {
-      const token = await this.userService.login({
-        username,
+      const { accessToken, error, id } = await this.userService.login({
+        email,
         password,
       });
-      if (!token) {
-        return res.status(400).send({ error: "User not found" });
+      if (error) {
+        return res.status(400).send({ error });
       }
-      return res.status(200).send({ status: "true", token });
+      return res.status(200).send({ status: "true", token: accessToken, id });
     } catch (e) {
       logger.error(e);
       next(e);
@@ -53,7 +54,7 @@ export default class AuthController {
 
   do = async (req: Request, res: Response) => {
     const result = ValidationHelper.reformatError(
-      await userValidation.run(req),
+      await signUpValidation.run(req),
     );
 
     return res.status(200).send(result);

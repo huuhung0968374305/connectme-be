@@ -3,9 +3,12 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
+import { Server } from "socket.io";
+import http from "http";
 
 import routes from "./routes";
 import { errorHandler } from "./middlewares/error";
+import { sockerHanler } from "./configs/rootSocket";
 
 // Create the express app and  import the type of app from express;
 const limiter = rateLimit({
@@ -14,6 +17,13 @@ const limiter = rateLimit({
 });
 dotenv.config();
 const app: Application = express();
+export const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+sockerHanler(io);
 
 app.use(cors());
 app.use(helmet());

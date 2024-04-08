@@ -1,6 +1,6 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
-import { config } from "./config";
+import { logConfig } from "./log";
 
 const enumerateErrorFormat = winston.format((info: any) => {
   if (info.message instanceof Error) {
@@ -23,7 +23,8 @@ const enumerateErrorFormat = winston.format((info: any) => {
   return info;
 });
 const transport = new DailyRotateFile({
-  filename: config.logConfig.logFolder + config.logConfig.logFile,
+  filename:
+    (logConfig.logFolder || "logs") + (logConfig.logFile || "logDetail"),
   datePattern: "YYYY-MM-DD",
   zippedArchive: true,
   maxSize: "20m",
