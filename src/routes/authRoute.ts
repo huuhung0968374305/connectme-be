@@ -8,10 +8,8 @@ import { UserService } from "../services/User.service";
 import { authMiddleware } from "../middlewares/auth";
 
 const router = Router();
-
 const userService = new UserService();
 const authController = new AuthController(userService);
-// const userValidator = new UserValidator();
 
 router.post("/signup", signUpValidation, authController.register);
 router.post("/signin", signIpValidation, authController.login);

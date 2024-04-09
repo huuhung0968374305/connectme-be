@@ -6,9 +6,7 @@ import { User } from "./User.model";
 export class Room extends Model<RoomAttributes> {
   declare id: string;
 
-  declare password: string;
-
-  declare username: string;
+  declare userId: string;
 }
 Room.init(
   {
@@ -17,14 +15,22 @@ Room.init(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    userId: {
+    UserId: {
       type: DataTypes.UUID,
       allowNull: false,
-      unique: true,
       references: {
         model: User,
         key: "id",
       },
+    },
+    roomId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "DOUBLE",
     },
   },
   { sequelize, modelName: "Room" },

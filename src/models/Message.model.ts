@@ -31,7 +31,7 @@ Message.init(
       allowNull: false,
       references: {
         model: Room,
-        key: "id",
+        key: "roomId",
       },
     },
     msgType: {

@@ -22,6 +22,15 @@ export class UserService {
     return newUser;
   }
 
+  async getAllUsers(): Promise<any> {
+    const users = await User.findAll({
+      attributes: {
+        exclude: ["password"],
+      },
+    });
+    return users;
+  }
+
   async login({ email, password }: UserAttributes) {
     const user = await User.findOne({
       where: { email },

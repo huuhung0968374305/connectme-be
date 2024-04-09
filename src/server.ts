@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 80;
 
 (async () => {
   try {
-    await sequelize.sync(); // Set force: true to drop and recreate tables (use with caution!)
+    await sequelize.sync({ force: true }); // Set force: true to drop and recreate tables (use with caution!)
 
     logger.info("Database tables resynced");
 
