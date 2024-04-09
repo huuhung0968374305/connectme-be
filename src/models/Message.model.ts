@@ -18,7 +18,7 @@ Message.init(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    userId: {
+    UserId: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
@@ -26,12 +26,12 @@ Message.init(
         key: "id",
       },
     },
-    roomId: {
+    RoomId: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: Room,
-        key: "roomId",
+        key: "id",
       },
     },
     msgType: {

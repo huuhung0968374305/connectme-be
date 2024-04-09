@@ -1,7 +1,7 @@
 export interface MessageAttributes {
   id: number;
-  userId: number; // Foreign key to User model
-  roomId: number; // Foreign key to Room model
+  UserId: number; // Foreign key to User model
+  RoomId: number; // Foreign key to Room model
   msgType: string;
   msg: string;
 }

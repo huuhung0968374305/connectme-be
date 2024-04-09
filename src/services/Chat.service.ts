@@ -3,26 +3,32 @@ import jwt from "jsonwebtoken";
 import { Room } from "../models/Room.model";
 
 import sequelize from "../db";
-import { v4 } from "uuid";
+import { UserChatRoom } from "../models/UserChatRoom.model";
 
 export class ChatService {
   async createRoom(userIds: Array<string>) {
     const [userId1, userId2] = userIds;
-    const roomId = v4();
     const transaction = await sequelize.transaction();
     try {
-      const room1 = await Room.create(
-        { roomId, UserId: userId1 },
-        { transaction },
-      );
-      const room2 = await Room.create(
-        { roomId, UserId: userId2 },
-        { transaction },
-      );
+      const {
+        dataValues: { id: newRoomId },
+      } = await Room.create();
+      if (newRoomId) {
+        const createdRoomRes1 = await UserChatRoom.create(
+          { RoomId: newRoomId, UserId: userId1 },
+          { transaction },
+        );
+        const createdRoomRes2 = await UserChatRoom.create(
+          { RoomId: newRoomId, UserId: userId2 },
+          { transaction },
+        );
 
-      await transaction.commit();
+        await transaction.commit();
 
-      return [room1, room2];
+        return [createdRoomRes1, createdRoomRes2];
+      }
+      transaction.rollback();
+      return [];
     } catch (error) {
       console.log("error", error);
       await transaction.rollback();
