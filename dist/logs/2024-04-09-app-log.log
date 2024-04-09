@@ -1,0 +1,3 @@
+{"level":"info","message":"Connection to PostgreSQL database established successfully."}
+{"level":"info","message":"Database tables resynced"}
+{"level":"info","message":"Listening on port 5000"}
