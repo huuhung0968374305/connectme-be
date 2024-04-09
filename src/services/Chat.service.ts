@@ -1,13 +1,33 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { Op } from "sequelize";
 import { Room } from "../models/Room.model";
 
 import sequelize from "../db";
 import { UserChatRoom } from "../models/UserChatRoom.model";
+import { Message } from "../models/Message.model";
 
 export class ChatService {
   async createRoom(userIds: Array<string>) {
     const [userId1, userId2] = userIds;
+    // found chat room first, if there is no chat room, create one
+
+    const user1Res = await UserChatRoom.findAll({
+      where: {
+        UserId: userId1,
+      },
+    });
+
+    const user1ChatRooms = user1Res.map((response) => response.RoomId);
+    const user2FoundRoomWithUser1 = await UserChatRoom.findAll({
+      where: {
+        UserId: userId2,
+        RoomId: {
+          [Op.in]: user1ChatRooms,
+        },
+      },
+    });
+
+    if (user2FoundRoomWithUser1.length > 0) return user2FoundRoomWithUser1;
+
     const transaction = await sequelize.transaction();
     try {
       const {
@@ -35,9 +55,13 @@ export class ChatService {
       throw error;
     }
   }
-  async createR(userId) {
-    // const room2 = await Room.create({ UserId: userId });
-    return;
-    // return room2;
+
+  async findMsgs(roomId) {
+    const messages = await Message.findAll({
+      where: {
+        RoomId: roomId,
+      },
+    });
+    return messages;
   }
 }

@@ -6,5 +6,6 @@ export interface UserAttributes {
   email?: string;
   phoneNumber?: string;
   country?: string;
+  imageUrl?: string;
   password: string;
 }

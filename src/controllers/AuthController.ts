@@ -38,14 +38,15 @@ export default class AuthController {
       return res.status(400).send({ errors: validate.errors });
     }
     try {
-      const { accessToken, error, id } = await this.userService.login({
+      const result = await this.userService.login({
         email,
         password,
       });
-      if (error) {
-        return res.status(400).send({ error });
+      if (result.error) {
+        return res.status(400).send({ error: result.error });
       }
-      return res.status(200).send({ status: "true", token: accessToken, id });
+      delete (result as any).password;
+      return res.status(200).send({ status: "true", data: result });
     } catch (e) {
       logger.error(e);
       next(e);

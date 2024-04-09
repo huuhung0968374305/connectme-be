@@ -1,8 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { faker } from "@faker-js/faker";
 
 import { UserAttributes } from "../interfaces/User.interface";
 import { User } from "../models/User.model";
+import { UserChatRoom } from "../models/UserChatRoom.model";
 
 export class UserService {
   async register(user: UserAttributes): Promise<any> {
@@ -17,7 +19,7 @@ export class UserService {
       user.password,
       10,
     )) as unknown as string;
-
+    user.imageUrl = faker.image.url();
     const newUser = await User.create({ ...user, password: hashedPassword });
     return newUser;
   }
@@ -29,6 +31,15 @@ export class UserService {
       },
     });
     return users;
+  }
+
+  async getAllUserRooms(userId: string): Promise<any> {
+    const rooms = await UserChatRoom.findAll({
+      where: {
+        UserId: userId,
+      },
+    });
+    return rooms;
   }
 
   async login({ email, password }: UserAttributes) {
@@ -43,11 +54,12 @@ export class UserService {
     if (userAllowed) {
       const payload = {
         email: user.email,
+        id: user.id,
       };
       const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
-      return { accessToken, id: user.id };
+      return { accessToken, ...user.dataValues };
     }
     return { error: "Incorrect password" };
   }

@@ -33,7 +33,6 @@ app.use(
     extended: true,
   }),
 );
-app.use(limiter);
 app.get("/", (_req, res) => {
   res.send("<h1>Welcome To JWT Authentication </h1>");
 });

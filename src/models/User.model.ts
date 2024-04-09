@@ -52,6 +52,9 @@ User.init(
     password: {
       type: DataTypes.STRING,
     },
+    imageUrl: {
+      type: DataTypes.STRING,
+    },
   },
   { sequelize, modelName: "User" },
 );

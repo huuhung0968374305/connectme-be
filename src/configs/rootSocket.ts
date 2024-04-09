@@ -1,19 +1,21 @@
 import socketIo from "socket.io";
+import { CryptoHelper } from "../helpers/crypto.helper";
+import { MessageAttributes } from "../interfaces/Message.interface";
+import { Message } from "../models/Message.model";
 
 export const sockerHanler = (io: socketIo.Server) => {
-  io.on("connection", async (socket) => {
+  io.on("connection", (socket) => {
     console.log("socket.id", socket.id);
-    socket.on("join-room", async ({ room, userId }) => {
-      console.log("join new room", room);
-      await socket.join(room);
+    socket.on("join-room", async (roomId) => {
+      socket.join(roomId);
     });
 
-    socket.on("send-message", ({ message, room }) => {
-      socket.to(room).emit("new-message", { message }); // Include sender information
+    socket.on("create-msg", async (data: any) => {
+      const msgData: MessageAttributes = CryptoHelper.decryptMsg(data);
+      await Message.create(msgData);
+      socket.in(msgData.RoomId).emit("room-new-message", data);
     });
 
-    socket.on("disconnect", () => {
-      console.log(socket.rooms.size);
-    });
+    socket.on("disconnect", () => {});
   });
 };

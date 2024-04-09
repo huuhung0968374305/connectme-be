@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { validationResult } from "express-validator";
 import { logger } from "../configs/logger";
 import { UserService } from "../services/User.service";
 import { ChatService } from "../services/Chat.service";
@@ -12,8 +11,19 @@ export class ChatController {
 
   getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.userService.getAllUsers();
-      res.status(200).send({ result });
+      const data = await this.userService.getAllUsers();
+      res.status(200).send({ data });
+    } catch (e) {
+      logger.error(e);
+      next(e);
+    }
+  };
+
+  getAllUserRooms = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.user;
+    try {
+      const data = await this.userService.getAllUserRooms(id);
+      res.status(200).send({ data });
     } catch (e) {
       logger.error(e);
       next(e);
@@ -23,19 +33,19 @@ export class ChatController {
   createRoom = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userIds } = req.body;
-      const result = await this.chatService.createRoom(userIds);
-      res.status(200).send({ result });
+      const data = await this.chatService.createRoom(userIds);
+      res.status(200).send({ data });
     } catch (e) {
       logger.error(e);
       next(e);
     }
   };
 
-  createR = async (req: Request, res: Response, next: NextFunction) => {
+  findMsgs = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userId } = req.body;
-      const result = await this.chatService.createR(userId);
-      res.status(200).send({ result });
+      const { roomId } = req.query;
+      const data = await this.chatService.findMsgs(roomId);
+      res.status(200).send({ data });
     } catch (e) {
       logger.error(e);
       next(e);
